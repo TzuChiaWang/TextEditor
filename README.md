@@ -1,5 +1,5 @@
 # TextEditor
-test 3
+test 4
 
 1. 含有File Menu(JMenu), 其下有Open/Save/Close三個JMenuItem
 2. JMenuItem: Edit, 其下有Undo/Redo
