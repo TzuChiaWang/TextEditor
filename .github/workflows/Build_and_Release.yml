@@ -4,11 +4,12 @@ on:
   workflow_dispatch: # Allows manual triggering
     inputs:
       tag:
-        description: 'Tag name'     
+        description: 'Tag name'
         required: true
       note:
         description: 'Release note'
-        
+        required: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,24 +17,28 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Node
+      - uses: actions/checkout@v3
+      
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Build
+      
+      - name: Install dependencies and build
         run: |
-          npm i -g @vercel/ncc
-          npm i @actions/github
+          npm install -g @vercel/ncc
+          npm install @actions/github
           npm run build
-      - name: Commit
+      
+      - name: Commit changes
         env:
           PERSONAL_TOKEN: ${{ secrets.ACTIONSECRETSTOKEN }}
         run: |
           git config --global user.name 'TzuChiaWang'
           git config --global user.email '152773519+TzuChiaWang@users.noreply.github.com'
-          git commit -am "dist build"
-          git push
+          git add .
+          git commit -m "dist build"
+          git push https://TzuChiaWang:${{ secrets.ACTIONSECRETSTOKEN }}@github.com/TzuChiaWang/TextEditor.git
 
   test:
     runs-on: ubuntu-latest
@@ -42,42 +47,45 @@ jobs:
       run:
         shell: bash
     steps:
-     - uses: actions/checkout@v4
-     - name: Test index.js
-       env:
-         INPUT_GITHUB_USERNAME: "TzuChiaWang"
-         INPUT_GITHUB_TOKEN: ${{ secrets.ACTIONSECRETSTOKEN }}
-         INPUT_TARGET_REPOS: '[TzuChiaWang/TextEditor]'
-         INPUT_OUTPUT_STYLE: MARKDOWN
-         INPUT_IGNORE_EVENTS: '[]'
-         INPUT_README_PATH: README.md
-         INPUT_COMMIT_MESSAGE: Update README.md
-         INPUT_EVENT_LIMIT: '100'
-       run: node ./dist/index.js
-                  
+      - uses: actions/checkout@v3
+      
+      - name: Test index.js
+        env:
+          INPUT_GITHUB_USERNAME: "TzuChiaWang"
+          INPUT_GITHUB_TOKEN: ${{ secrets.ACTIONSECRETSTOKEN }}
+          INPUT_TARGET_REPOS: '[TzuChiaWang/TextEditor]'
+          INPUT_OUTPUT_STYLE: MARKDOWN
+          INPUT_IGNORE_EVENTS: '[]'
+          INPUT_README_PATH: README.md
+          INPUT_COMMIT_MESSAGE: Update README.md
+          INPUT_EVENT_LIMIT: '100'
+        run: |
+          node ./dist/index.js
 
   release:
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - uses: actions/checkout@v4
-      - name: Pull latest
+      - uses: actions/checkout@v3
+      
+      - name: Pull latest changes
         run: |
           git config --global user.name 'TzuChiaWang'
           git config --global user.email '152773519+TzuChiaWang@users.noreply.github.com'
           git pull
-      - name: Tag it
+      
+      - name: Create and push tag
         run: |
-          git tag -a ${{ inputs.tag }} -m "${{ inputs.note }}" master
-          git push --tags
-      - name: Release
+          git tag -a ${{ github.event.inputs.tag }} -m "${{ github.event.inputs.note }}"
+          git push origin ${{ github.event.inputs.tag }}
+      
+      - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ inputs.tag }}
-          release_name: Release ${{ inputs.tag }}
-          body: ${{ inputs.note }}
+          tag_name: ${{ github.event.inputs.tag }}
+          release_name: Release ${{ github.event.inputs.tag }}
+          body: ${{ github.event.inputs.note }}
           draft: false
           prerelease: false
-
