@@ -11,7 +11,7 @@ jobs:
       steps:
         - uses: actions/checkout@v4
         - name: Build and Release
-          uses: TzuChiaWang/activity-log@v2
+          uses: TzuChiaWang/activity-log@Release v3
           with:
             GITHUB_USERNAME: "TzuChiaWang"
             GITHUB_TOKEN: ${{ secrets.ACTIONSECRETSTOKEN }} # Ensure this matches the secret name in repository settings  
