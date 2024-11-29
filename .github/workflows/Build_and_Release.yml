@@ -32,7 +32,7 @@ jobs:
       
       - name: Commit changes
         env:
-          PERSONAL_TOKEN: ${{ secrets.ACTIONSECRETSTOKEN }}
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name 'TzuChiaWang'
           git config --global user.email '152773519+TzuChiaWang@users.noreply.github.com'
@@ -52,7 +52,7 @@ jobs:
       - name: Test index.js
         env:
           INPUT_GITHUB_USERNAME: "TzuChiaWang"
-          INPUT_GITHUB_TOKEN: ${{ secrets.ACTIONSECRETSTOKEN }}
+          INPUT_GITHUB_TOKEN: ${{ ssecrets.GITHUB_TOKEN }}
           INPUT_TARGET_REPOS: '[TzuChiaWang/TextEditor]'
           INPUT_OUTPUT_STYLE: MARKDOWN
           INPUT_IGNORE_EVENTS: '[]'
