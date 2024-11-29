@@ -32,6 +32,8 @@ jobs:
         run: |
           git config --global user.name 'TzuChiaWang'
           git config --global user.email '152773519+TzuChiaWang@users.noreply.github.com'
+          git remote set-url origin https://TzuChiaWang:${{ secrets.ACTIONSECRETSTOKEN }}@github.com/TzuChiaWang/TextEditor.git
+          git add .
           git commit -am "dist build"
           git push
 
