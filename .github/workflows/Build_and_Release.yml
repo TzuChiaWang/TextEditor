@@ -27,6 +27,8 @@ jobs:
           npm i @actions/github
           npm run build
       - name: Commit
+        env:
+          PERSONAL_TOKEN: ${{ secrets.ACTIONSECRETSTOKEN }}
         run: |
           git config --global user.name 'TzuChiaWang'
           git config --global user.email '152773519+TzuChiaWang@users.noreply.github.com'
