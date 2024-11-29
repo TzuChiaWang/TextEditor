@@ -27,12 +27,9 @@ jobs:
           npm i @actions/github
           npm run build
       - name: Commit
-        env:
-          ACTIONS_PAT: ${{ secrets.ACTIONSECRETSTOKEN }}
         run: |
           git config --global user.name 'TzuChiaWang'
           git config --global user.email '152773519+TzuChiaWang@users.noreply.github.com'
-          git remote set-url origin https://TzuChiaWang:${{ secrets.ACTIONSECRETSTOKEN }}@github.com/TzuChiaWang/TextEditor.git
           git commit -am "dist build"
           git push
 
